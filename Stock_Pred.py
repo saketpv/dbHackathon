@@ -298,19 +298,19 @@ def PrepareData(df, vals, cols, trn_data_pct=0.8, time_steps=10):
 
 #==========================================================================================================
 
-def BuildModel(unit_i, unit_h, act_fn='relu'):
+def BuildModel(unit_i, unit_h, n_ftrs, n_smpls, act_fn='relu'):
     
     model = Sequential()
     
     model.add(LSTM(units=unit_i,
                    activation=act_fn,
                    return_sequences=True,
-                   input_shape=(x_train.shape[1], x_train.shape[2])))    
+                   input_shape=(n_ftrs, n_smpls.shape[2])))
     
     model.add(LSTM(units=unit_h,
                    activation=act_fn,
                    return_sequences=True,
-                   input_shape=(x_train.shape[1], x_train.shape[2])))    
+                   input_shape=(n_ftrs, n_smpls)))
     
     model.add(LSTM(units=unit_h,
                    activation=act_fn,
@@ -350,24 +350,24 @@ def EvaluateModel(pred, orig):
     return rmse, mape
 
 
-def BuildModel2(unit_i, unit_h, act_fn='relu'):
+def BuildModel2(unit_i, unit_h, n_ftrs, n_smpls, act_fn='relu'):
     
     model = Sequential()
     
     model.add(LSTM(units=unit_i,
                    activation=act_fn,
                    return_sequences=True,
-                   input_shape=(x_train.shape[1], x_train.shape[2])))
+                   input_shape=(n_ftrs, n_smpls)))
     
     model.add(LSTM(units=unit_i,
                    activation=act_fn,
                    return_sequences=True,
-                   input_shape=(x_train.shape[1], x_train.shape[2])))    
+                   input_shape=(n_ftrs, n_smpls)))
     
     model.add(LSTM(units=unit_h,
                    activation=act_fn,
                    return_sequences=True,
-                   input_shape=(x_train.shape[1], x_train.shape[2])))    
+                   input_shape=(n_ftrs, n_smpls)))
     
     model.add(LSTM(units=unit_h,
                    activation=act_fn,
@@ -458,7 +458,6 @@ if __name__ == '__main__':
                                end)
     
     stocks['Close_N'].fillna(0, inplace=True)
-    
 
     # Data Preprocessing
 
@@ -483,22 +482,6 @@ if __name__ == '__main__':
 
     # Data preparation
     st_cl = FilterData(stocks, ['Date', 'Close', 'Close_N', 'Month'])
-
-    # # One-hot encoding on the filtered dataset
-    #
-    # ohe = OneHotEncoder(drop='first', sparse=False)
-    # st_enc = ohe.fit_transform(st_cl[['Stock']])
-    # st_enc = pd.DataFrame(st_enc, columns=ohe.get_feature_names_out())
-
-    # Merging the One-hot encoding features with the actual data
-
-    # st_cl_enc = st_cl.merge(st_enc, left_index=True, right_index=True)
-    
-    x_trn_l = []
-    y_trn_l = []
-    x_tst_l = []
-    y_tst_l = []
-    scaler = []
 
     ohe_cols = ['Date', 'Stock']
     vals = ['Close']
