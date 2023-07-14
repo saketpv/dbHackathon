@@ -54,8 +54,8 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import nltk
 import nltk.corpus
 from nltk.tokenize import word_tokenize
-nltk.download('vader_lexicon')
-nltk.download('punkt')
+#nltk.download('vader_lexicon')
+#nltk.download('punkt')
 
 # matplotlib.style.use('ggplot')
 
@@ -298,19 +298,19 @@ def PrepareData(df, vals, cols, trn_data_pct=0.8, time_steps=10):
 
 #==========================================================================================================
 
-def BuildModel(unit_i, unit_h, n_ftrs, n_smpls, act_fn='relu'):
+def BuildModel(unit_i, unit_h, n_ts, n_ftrs, act_fn='relu'):
     
     model = Sequential()
     
     model.add(LSTM(units=unit_i,
                    activation=act_fn,
                    return_sequences=True,
-                   input_shape=(n_ftrs, n_smpls.shape[2])))
+                   input_shape=(n_ts, n_ftrs.shape[2])))
     
     model.add(LSTM(units=unit_h,
                    activation=act_fn,
                    return_sequences=True,
-                   input_shape=(n_ftrs, n_smpls)))
+                   input_shape=(n_ts, n_ftrs)))
     
     model.add(LSTM(units=unit_h,
                    activation=act_fn,
@@ -350,24 +350,24 @@ def EvaluateModel(pred, orig):
     return rmse, mape
 
 
-def BuildModel2(unit_i, unit_h, n_ftrs, n_smpls, act_fn='relu'):
+def BuildModel2(unit_i, unit_h, n_ts, n_ftrs, act_fn='relu'):
     
     model = Sequential()
     
     model.add(LSTM(units=unit_i,
                    activation=act_fn,
                    return_sequences=True,
-                   input_shape=(n_ftrs, n_smpls)))
+                   input_shape=(n_ts, n_ftrs)))
     
     model.add(LSTM(units=unit_i,
                    activation=act_fn,
                    return_sequences=True,
-                   input_shape=(n_ftrs, n_smpls)))
+                   input_shape=(n_ts, n_ftrs)))
     
     model.add(LSTM(units=unit_h,
                    activation=act_fn,
                    return_sequences=True,
-                   input_shape=(n_ftrs, n_smpls)))
+                   input_shape=(n_ts, n_ftrs)))
     
     model.add(LSTM(units=unit_h,
                    activation=act_fn,
